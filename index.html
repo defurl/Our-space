@@ -49,6 +49,16 @@
         .border-primary { border-color: var(--color-primary); }
         .ring-primary:focus { --tw-ring-color: var(--color-primary); }
 
+        /* Tab Styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
         /* Animation Styles */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -83,20 +93,35 @@
             </div>
         </header>
 
-        <!-- Kanban Board -->
-        <main id="kanbanBoard" class="space-y-12">
-            <!-- Hinna's Section -->
-            <div id="hinna-section" class="user-section" data-owner="Hinna">
-                <h2 class="text-2xl font-bold mb-4 text-accent-hinna">Hinna's Board</h2>
+        <!-- Board Navigation -->
+        <nav class="flex border-b mb-6">
+            <button id="tab-our" class="tab-btn py-2 px-4 font-semibold text-gray-600 active">Our Board</button>
+            <button id="tab-hinna" class="tab-btn py-2 px-4 font-semibold text-gray-600">Hinna's Board</button>
+            <button id="tab-zilus" class="tab-btn py-2 px-4 font-semibold text-gray-600">Zilus's Board</button>
+        </nav>
+
+        <!-- Kanban Boards Container -->
+        <main id="kanbanBoardsContainer">
+            <!-- Our Board -->
+            <div id="our-board-section" class="board-section">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div id="our-todo" class="kanban-column bg-secondary p-4 rounded-xl" data-status="todo"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-todo"></span> To Do</h2><div id="our-todo-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                    <div id="our-inprogress" class="kanban-column bg-secondary p-4 rounded-xl" data-status="inprogress"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-inprogress"></span> In Progress</h2><div id="our-inprogress-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                    <div id="our-done" class="kanban-column bg-secondary p-4 rounded-xl" data-status="done"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-done"></span> Done!</h2><div id="our-done-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                </div>
+            </div>
+
+            <!-- Hinna's Board -->
+            <div id="hinna-board-section" class="board-section hidden">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div id="hinna-todo" class="kanban-column bg-secondary p-4 rounded-xl" data-status="todo"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-todo"></span> To Do</h3><div id="hinna-todo-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
                     <div id="hinna-inprogress" class="kanban-column bg-secondary p-4 rounded-xl" data-status="inprogress"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-inprogress"></span> In Progress</h3><div id="hinna-inprogress-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
                     <div id="hinna-done" class="kanban-column bg-secondary p-4 rounded-xl" data-status="done"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-done"></span> Done!</h3><div id="hinna-done-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
                 </div>
             </div>
-            <!-- Zilus's Section -->
-            <div id="zilus-section" class="user-section" data-owner="Zilus">
-                <h2 class="text-2xl font-bold mb-4 text-accent-zilus">Zilus's Board</h2>
+
+            <!-- Zilus's Board -->
+            <div id="zilus-board-section" class="board-section hidden">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div id="zilus-todo" class="kanban-column bg-secondary p-4 rounded-xl" data-status="todo"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-todo"></span> To Do</h3><div id="zilus-todo-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
                     <div id="zilus-inprogress" class="kanban-column bg-secondary p-4 rounded-xl" data-status="inprogress"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-inprogress"></span> In Progress</h3><div id="zilus-inprogress-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
@@ -154,10 +179,10 @@
                     </div>
                 </div>
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Add task for:</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Assign to:</label>
                     <div class="flex gap-4">
-                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user1"><input type="radio" name="owner" id="owner-user1" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user1" class="font-semibold"></span></label>
-                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user2"><input type="radio" name="owner" id="owner-user2" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user2" class="font-semibold"></span></label>
+                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user1"><input type="radio" name="assignedTo" id="assign-user1" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user1" class="font-semibold"></span></label>
+                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user2"><input type="radio" name="assignedTo" id="assign-user2" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user2" class="font-semibold"></span></label>
                     </div>
                 </div>
                 <div class="flex justify-end gap-4">
@@ -315,8 +340,8 @@
         function setupUI() {
             document.getElementById('name-user1').textContent = USER1_NAME;
             document.getElementById('name-user2').textContent = USER2_NAME;
-            document.getElementById('owner-user1').value = USER1_NAME;
-            document.getElementById('owner-user2').value = USER2_NAME;
+            document.getElementById('assign-user1').value = USER1_NAME;
+            document.getElementById('assign-user2').value = USER2_NAME;
             document.getElementById('label-user1').style.backgroundColor = 'var(--color-accent-hinna)';
             document.getElementById('label-user2').style.backgroundColor = 'var(--color-accent-zilus)';
 
@@ -326,7 +351,19 @@
             document.getElementById('taskForm').addEventListener('submit', handleFormSubmit);
             document.getElementById('completionNoteForm').addEventListener('submit', handleCompletionNoteSubmit);
             document.getElementById('skipCompletionNoteBtn').addEventListener('click', () => completionNoteModal.classList.add('hidden'));
-            document.getElementById('kanbanBoard').addEventListener('click', handleBoardClicks);
+            document.getElementById('kanbanBoardsContainer').addEventListener('click', handleBoardClicks);
+            
+            // Tab navigation
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    document.querySelectorAll('.board-section').forEach(bs => bs.classList.add('hidden'));
+                    const targetBoardId = e.target.id.replace('tab-', '') + '-board-section';
+                    document.getElementById(targetBoardId).classList.remove('hidden');
+                });
+            });
         }
 
         // --- Firestore Operations ---
@@ -354,15 +391,22 @@
                     await seedDatabaseIfEmpty();
                 }
                 
-                renderBoard(isInitialCall);
+                renderAllBoards(isInitialCall);
             });
         }
 
-        function renderBoard(isInitial) {
+        function renderAllBoards(isInitial) {
             document.querySelectorAll('.task-container').forEach(c => c.innerHTML = '');
 
             for (const taskId in localTasks) {
-                renderTask(localTasks[taskId], isInitial);
+                const task = localTasks[taskId];
+                
+                // Render on the specific user's board
+                const ownerName = task.assignedTo.toLowerCase();
+                renderTask(task, `${ownerName}-${task.status}-tasks`, isInitial);
+
+                // Render on the unified "Our Board"
+                renderTask(task, `our-${task.status}-tasks`, isInitial);
             }
             
             setupDragAndDrop();
@@ -371,18 +415,18 @@
         async function handleFormSubmit(e) {
             e.preventDefault();
             const taskId = document.getElementById('taskId').value;
-            const ownerRadio = document.querySelector('input[name="owner"]:checked');
+            const assignedToRadio = document.querySelector('input[name="assignedTo"]:checked');
             const frequencyRadio = document.querySelector('input[name="frequency"]:checked');
 
-            if (!ownerRadio) {
-                showConfirmationModal("Please select who this task is for.", true);
+            if (!assignedToRadio) {
+                showConfirmationModal("Please assign the task to someone.", true);
                 return;
             }
 
             const taskData = {
                 title: document.getElementById('taskTitle').value,
                 description: document.getElementById('taskDescription').value,
-                owner: ownerRadio.value,
+                assignedTo: assignedToRadio.value,
                 frequency: frequencyRadio ? frequencyRadio.value : 'one-time',
             };
 
@@ -393,7 +437,7 @@
                     taskData.status = 'todo';
                     taskData.createdAt = serverTimestamp();
                     taskData.assignedBy = currentUser; 
-                    taskData.resetAt = serverTimestamp(); // Set initial reset time
+                    taskData.resetAt = serverTimestamp();
                     await addDoc(getTasksCollection(), taskData);
                 }
                 taskModal.classList.add('hidden');
@@ -419,13 +463,11 @@
         }
 
         // --- Task Rendering & Board Management ---
-        function renderTask(task, withAnimation) {
-            if (!task.owner || !task.status) {
+        function renderTask(task, containerId, withAnimation) {
+            if (!task.status || !task.assignedTo) {
                 return; 
             }
             
-            const ownerName = task.owner.toLowerCase();
-            const containerId = `${ownerName}-${task.status}-tasks`;
             const container = document.getElementById(containerId);
             
             if (!container) {
@@ -440,6 +482,7 @@
             }
             taskElement.draggable = true;
 
+            const assigneeColor = task.assignedTo === USER1_NAME ? 'bg-accent-hinna' : 'bg-accent-zilus';
             const frequencyMap = {
                 'daily': '<span>☀️</span> Daily',
                 'weekly': '<span>🗓️</span> Weekly',
@@ -468,7 +511,7 @@
                 ${completionNoteHTML}
                 <div class="flex justify-between items-center mt-3">
                     <span class="text-xs font-medium text-gray-500 flex items-center gap-1">${frequencyIcon}</span>
-                    <span class="text-xs font-semibold text-gray-500">Assigned by: ${task.assignedBy || '...'}</span>
+                    <span class="text-xs font-semibold text-white px-2 py-1 rounded-full ${assigneeColor}">${task.assignedTo}</span>
                 </div>
             `;
             container.appendChild(taskElement);
@@ -479,7 +522,7 @@
             document.getElementById('taskForm').reset();
             document.getElementById('taskId').value = '';
             document.getElementById('modalTitle').textContent = 'Add a new task';
-            document.querySelector('input[name="frequency"][value="one-time"]').checked = true; // Default to one-time
+            document.querySelector('input[name="frequency"][value="one-time"]').checked = true;
             taskModal.classList.remove('hidden');
         }
 
@@ -489,8 +532,8 @@
             document.getElementById('taskId').value = task.id;
             document.getElementById('taskTitle').value = task.title;
             document.getElementById('taskDescription').value = task.description;
-            if (task.owner === USER1_NAME) document.getElementById('owner-user1').checked = true;
-            else if (task.owner === USER2_NAME) document.getElementById('owner-user2').checked = true;
+            if (task.assignedTo === USER1_NAME) document.getElementById('assign-user1').checked = true;
+            else if (task.assignedTo === USER2_NAME) document.getElementById('assign-user2').checked = true;
             const frequency = task.frequency || 'one-time';
             document.querySelector(`input[name="frequency"][value="${frequency}"]`).checked = true;
             taskModal.classList.remove('hidden');
@@ -527,20 +570,20 @@
             const addNoteBtn = e.target.closest('.add-note-btn');
 
             if (editBtn) {
-                const taskId = editBtn.dataset.id;
+                const taskId = e.target.closest('.task').id;
                 const task = localTasks[taskId];
                 if(task) openEditTaskModal(task);
             }
 
             if (deleteBtn) {
-                const taskId = deleteBtn.dataset.id;
+                const taskId = e.target.closest('.task').id;
                 showConfirmationModal('This task will be permanently deleted.', false, () => {
                     deleteDoc(doc(db, 'spaces', SHARED_SPACE_ID, 'tasks', taskId)).catch(err => console.error(err));
                 });
             }
 
             if(addNoteBtn) {
-                const taskId = addNoteBtn.dataset.id;
+                const taskId = e.target.closest('.task').id;
                 document.getElementById('completionTaskId').value = taskId;
                 document.getElementById('completionNoteForm').reset();
                 completionNoteModal.classList.remove('hidden');
@@ -650,9 +693,9 @@
                 console.log("Space is empty. Seeding with sample data...");
                 const batch = writeBatch(db);
                 const sampleTasks = [
-                    { title: "Plan date night", description: "Decide on a restaurant and make reservations.", owner: "Hinna", frequency: "weekly", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() },
-                    { title: "Workout session", description: "Go for a 30-minute run together.", owner: "Zilus", frequency: "daily", status: "inprogress", createdAt: serverTimestamp(), assignedBy: "Zilus", resetAt: serverTimestamp() },
-                    { title: "Buy birthday gift", description: "For mom's birthday next month.", owner: "Zilus", frequency: "one-time", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() }
+                    { title: "Plan date night", description: "Decide on a restaurant and make reservations.", assignedTo: "Hinna", frequency: "weekly", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() },
+                    { title: "Workout session", description: "Go for a 30-minute run together.", assignedTo: "Zilus", frequency: "daily", status: "inprogress", createdAt: serverTimestamp(), assignedBy: "Zilus", resetAt: serverTimestamp() },
+                    { title: "Buy birthday gift", description: "For mom's birthday next month.", assignedTo: "Zilus", frequency: "one-time", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() }
                 ];
                 sampleTasks.forEach(task => {
                     const docRef = doc(tasksCollection);
