@@ -406,14 +406,12 @@
             for (const taskId in localTasks) {
                 const task = localTasks[taskId];
                 
-                // Render on the unified "Our Board"
-                renderTask(task, `our-${task.status}-tasks`, isInitial);
-
-                // Render on the specific user's board IF assigned to them
                 if (task.assignedTo === USER1_NAME) {
                     renderTask(task, `hinna-${task.status}-tasks`, isInitial);
                 } else if (task.assignedTo === USER2_NAME) {
                     renderTask(task, `zilus-${task.status}-tasks`, isInitial);
+                } else if (task.assignedTo === 'Us') {
+                    renderTask(task, `our-${task.status}-tasks`, isInitial);
                 }
             }
             
@@ -484,8 +482,9 @@
 
             const boardPrefix = containerId.split('-')[0];
             const taskElement = document.createElement('div');
+            // Use a unique ID for each rendered element to avoid conflicts between boards
             taskElement.id = `${boardPrefix}-${task.id}`;
-            taskElement.dataset.taskId = task.id;
+            taskElement.dataset.taskId = task.id; // Store the real task ID here
             taskElement.className = 'task bg-white p-4 rounded-lg shadow cursor-grab';
             if(withAnimation) {
                 taskElement.classList.add('task-enter-animation');
