@@ -23,7 +23,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #FFFBFB;
         }
-        .kanban-column { min-height: 400px; }
+        .kanban-column { min-height: 200px; }
         .task.dragging { opacity: 0.5; transform: rotate(3deg); }
         :root {
             --color-primary: #F78A9D;
@@ -38,6 +38,10 @@
         .bg-secondary { background-color: var(--color-secondary); }
         .bg-accent-zilus { background-color: var(--color-accent-zilus); }
         .bg-accent-hinna { background-color: var(--color-accent-hinna); }
+        .text-accent-zilus { color: #5a4b8c; }
+        .text-accent-hinna { color: #b56c26; }
+        .border-accent-zilus { border-color: var(--color-accent-zilus); }
+        .border-accent-hinna { border-color: var(--color-accent-hinna); }
         .bg-status-done { background-color: var(--color-done); }
         .bg-status-inprogress { background-color: var(--color-inprogress); }
         .bg-status-todo { background-color: var(--color-todo); }
@@ -47,32 +51,14 @@
 
         /* Animation Styles */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .task-enter-animation {
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-
-        .modal-container {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease;
-        }
-        .modal-container.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .modal-container.hidden .modal-content {
-            transform: scale(0.95);
-        }
+        .task-enter-animation { animation: fadeInUp 0.5s ease-out forwards; }
+        .modal-container { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease; }
+        .modal-container.hidden { opacity: 0; pointer-events: none; }
+        .modal-container.hidden .modal-content { transform: scale(0.95); }
     </style>
 </head>
 <body class="text-gray-800">
@@ -84,13 +70,12 @@
             <div>
                 <h1 class="text-4xl font-bold text-primary">Our Space</h1>
                 <p class="text-gray-500 mt-1">A shared place for our goals and dreams.</p>
-                <p class="text-sm text-gray-600 mt-2">Logged in as: <span id="currentUserDisplay" class="font-bold"></span></p>
+                <div class="flex items-center gap-4 mt-2">
+                    <p class="text-sm text-gray-600">Logged in as: <span id="currentUserDisplay" class="font-bold"></span></p>
+                    <button id="logoutBtn" class="text-sm text-blue-500 hover:underline">Logout</button>
+                </div>
             </div>
             <div class="flex items-center gap-4 mt-4 sm:mt-0">
-                <div class="text-right">
-                    <p id="user1Name" class="font-semibold"></p>
-                    <p class="text-sm text-gray-500">with <span id="user2Name" class="font-semibold"></span></p>
-                </div>
                 <button id="addTaskBtn" class="bg-primary text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Add Task
@@ -99,17 +84,32 @@
         </header>
 
         <!-- Kanban Board -->
-        <main id="kanbanBoard" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div id="todo" class="kanban-column bg-secondary p-4 rounded-xl" data-status="todo"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-todo"></span> To Do</h2><div id="todo-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
-            <div id="inprogress" class="kanban-column bg-secondary p-4 rounded-xl" data-status="inprogress"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-inprogress"></span> In Progress</h2><div id="inprogress-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
-            <div id="done" class="kanban-column bg-secondary p-4 rounded-xl" data-status="done"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-done"></span> Done!</h2><div id="done-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+        <main id="kanbanBoard" class="space-y-12">
+            <!-- Hinna's Section -->
+            <div id="hinna-section" class="user-section" data-owner="Hinna">
+                <h2 class="text-2xl font-bold mb-4 text-accent-hinna">Hinna's Board</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div id="hinna-todo" class="kanban-column bg-secondary p-4 rounded-xl" data-status="todo"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-todo"></span> To Do</h3><div id="hinna-todo-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                    <div id="hinna-inprogress" class="kanban-column bg-secondary p-4 rounded-xl" data-status="inprogress"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-inprogress"></span> In Progress</h3><div id="hinna-inprogress-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                    <div id="hinna-done" class="kanban-column bg-secondary p-4 rounded-xl" data-status="done"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-done"></span> Done!</h3><div id="hinna-done-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                </div>
+            </div>
+            <!-- Zilus's Section -->
+            <div id="zilus-section" class="user-section" data-owner="Zilus">
+                <h2 class="text-2xl font-bold mb-4 text-accent-zilus">Zilus's Board</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div id="zilus-todo" class="kanban-column bg-secondary p-4 rounded-xl" data-status="todo"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-todo"></span> To Do</h3><div id="zilus-todo-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                    <div id="zilus-inprogress" class="kanban-column bg-secondary p-4 rounded-xl" data-status="inprogress"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-inprogress"></span> In Progress</h3><div id="zilus-inprogress-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                    <div id="zilus-done" class="kanban-column bg-secondary p-4 rounded-xl" data-status="done"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-status-done"></span> Done!</h3><div id="zilus-done-tasks" class="space-y-4 task-container min-h-[100px]"></div></div>
+                </div>
+            </div>
         </main>
         
         <footer class="text-center mt-12 text-gray-400"><p>Made with ♡ for you.</p></footer>
     </div>
     
     <!-- Login Modal -->
-    <div id="loginModal" class="modal-container fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div id="loginModal" class="modal-container fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
         <div id="loginContent" class="modal-content bg-white rounded-xl p-8 w-full max-w-md text-center">
             <div id="userSelection">
                 <h2 class="text-2xl font-bold mb-2 text-primary">Welcome to Our Space!</h2>
@@ -148,15 +148,16 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Frequency:</label>
                     <div class="flex gap-4">
+                        <label class="flex items-center gap-2"><input type="radio" name="frequency" value="one-time" class="form-radio h-4 w-4 text-primary focus:ring-primary"> One-time</label>
                         <label class="flex items-center gap-2"><input type="radio" name="frequency" value="daily" class="form-radio h-4 w-4 text-primary focus:ring-primary"> Daily</label>
                         <label class="flex items-center gap-2"><input type="radio" name="frequency" value="weekly" class="form-radio h-4 w-4 text-primary focus:ring-primary"> Weekly</label>
                     </div>
                 </div>
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Assign to:</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Add task for:</label>
                     <div class="flex gap-4">
-                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user1"><input type="radio" name="assignedTo" id="assign-user1" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user1" class="font-semibold"></span></label>
-                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user2"><input type="radio" name="assignedTo" id="assign-user2" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user2" class="font-semibold"></span></label>
+                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user1"><input type="radio" name="owner" id="owner-user1" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user1" class="font-semibold"></span></label>
+                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user2"><input type="radio" name="owner" id="owner-user2" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user2" class="font-semibold"></span></label>
                     </div>
                 </div>
                 <div class="flex justify-end gap-4">
@@ -242,7 +243,12 @@
                 auth = getAuth(app);
                 onAuthStateChanged(auth, user => {
                     if (user) {
-                        loginModal.classList.remove('hidden');
+                        const savedUser = localStorage.getItem('our-space-user');
+                        if (savedUser) {
+                            startApp(savedUser);
+                        } else {
+                            loginModal.classList.remove('hidden');
+                        }
                     } else {
                         signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
                     }
@@ -268,6 +274,7 @@
                 const loginError = document.getElementById('loginError');
 
                 if (password === USER_PASSWORDS[username]) {
+                    localStorage.setItem('our-space-user', username);
                     startApp(username);
                 } else {
                     loginError.textContent = "Incorrect password.";
@@ -279,6 +286,11 @@
                 document.getElementById('userSelection').classList.remove('hidden');
                 document.getElementById('loginError').textContent = '';
                 document.getElementById('passwordInput').value = '';
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('our-space-user');
+                location.reload();
             });
         }
         
@@ -297,17 +309,14 @@
             document.getElementById('currentUserDisplay').textContent = currentUser;
             setupUI();
             listenForTasks();
-            seedDatabaseIfEmpty();
         }
 
         // --- UI Setup ---
         function setupUI() {
-            document.getElementById('user1Name').textContent = USER1_NAME;
-            document.getElementById('user2Name').textContent = USER2_NAME;
             document.getElementById('name-user1').textContent = USER1_NAME;
             document.getElementById('name-user2').textContent = USER2_NAME;
-            document.getElementById('assign-user1').value = USER1_NAME;
-            document.getElementById('assign-user2').value = USER2_NAME;
+            document.getElementById('owner-user1').value = USER1_NAME;
+            document.getElementById('owner-user2').value = USER2_NAME;
             document.getElementById('label-user1').style.backgroundColor = 'var(--color-accent-hinna)';
             document.getElementById('label-user2').style.backgroundColor = 'var(--color-accent-zilus)';
 
@@ -329,8 +338,8 @@
             if (unsubscribe) unsubscribe();
 
             const q = query(getTasksCollection());
-            unsubscribe = onSnapshot(q, (snapshot) => {
-                let isInitialCall = localTasks === null || Object.keys(localTasks).length === 0;
+            unsubscribe = onSnapshot(q, async (snapshot) => {
+                let isInitialCall = Object.keys(localTasks).length === 0;
                 
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "removed") {
@@ -339,15 +348,18 @@
                         localTasks[change.doc.id] = { id: change.doc.id, ...change.doc.data() };
                     }
                 });
+
+                if (isInitialCall) {
+                    await checkAndResetTasks();
+                    await seedDatabaseIfEmpty();
+                }
                 
                 renderBoard(isInitialCall);
             });
         }
 
         function renderBoard(isInitial) {
-            document.getElementById('todo-tasks').innerHTML = '';
-            document.getElementById('inprogress-tasks').innerHTML = '';
-            document.getElementById('done-tasks').innerHTML = '';
+            document.querySelectorAll('.task-container').forEach(c => c.innerHTML = '');
 
             for (const taskId in localTasks) {
                 renderTask(localTasks[taskId], isInitial);
@@ -359,20 +371,19 @@
         async function handleFormSubmit(e) {
             e.preventDefault();
             const taskId = document.getElementById('taskId').value;
-            const assignedToRadio = document.querySelector('input[name="assignedTo"]:checked');
+            const ownerRadio = document.querySelector('input[name="owner"]:checked');
             const frequencyRadio = document.querySelector('input[name="frequency"]:checked');
 
-            if (!assignedToRadio) {
-                showConfirmationModal("Please assign the task to someone.", true);
+            if (!ownerRadio) {
+                showConfirmationModal("Please select who this task is for.", true);
                 return;
             }
 
             const taskData = {
                 title: document.getElementById('taskTitle').value,
                 description: document.getElementById('taskDescription').value,
-                assignedTo: assignedToRadio.value,
-                frequency: frequencyRadio ? frequencyRadio.value : null,
-                lastModifiedBy: currentUser
+                owner: ownerRadio.value,
+                frequency: frequencyRadio ? frequencyRadio.value : 'one-time',
             };
 
             try {
@@ -381,6 +392,8 @@
                 } else {
                     taskData.status = 'todo';
                     taskData.createdAt = serverTimestamp();
+                    taskData.assignedBy = currentUser; 
+                    taskData.resetAt = serverTimestamp(); // Set initial reset time
                     await addDoc(getTasksCollection(), taskData);
                 }
                 taskModal.classList.add('hidden');
@@ -396,8 +409,7 @@
             if (taskId) {
                 try {
                     await updateDoc(doc(db, 'spaces', SHARED_SPACE_ID, 'tasks', taskId), { 
-                        completionNote: note || "",
-                        lastModifiedBy: currentUser
+                        completionNote: note || ""
                     });
                 } catch (error) {
                     console.error("Error saving completion note:", error);
@@ -408,9 +420,15 @@
 
         // --- Task Rendering & Board Management ---
         function renderTask(task, withAnimation) {
-            const container = document.getElementById(`${task.status}-tasks`);
+            if (!task.owner || !task.status) {
+                return; 
+            }
+            
+            const ownerName = task.owner.toLowerCase();
+            const containerId = `${ownerName}-${task.status}-tasks`;
+            const container = document.getElementById(containerId);
+            
             if (!container) {
-                console.error(`Could not find container for status: '${task.status}'`);
                 return;
             }
 
@@ -422,8 +440,12 @@
             }
             taskElement.draggable = true;
 
-            const assigneeColor = task.assignedTo === USER1_NAME ? 'bg-accent-hinna' : 'bg-accent-zilus';
-            const frequencyIcon = task.frequency === 'daily' ? '<span>☀️</span> Daily' : task.frequency === 'weekly' ? '<span>🗓️</span> Weekly' : '';
+            const frequencyMap = {
+                'daily': '<span>☀️</span> Daily',
+                'weekly': '<span>🗓️</span> Weekly',
+                'one-time': '<span>📌</span> One-time'
+            };
+            const frequencyIcon = frequencyMap[task.frequency] || frequencyMap['one-time'];
             
             let completionNoteHTML = '';
             if (task.status === 'done') {
@@ -445,8 +467,8 @@
                 <p class="text-sm text-gray-600 mb-3">${task.description}</p>
                 ${completionNoteHTML}
                 <div class="flex justify-between items-center mt-3">
-                    <span class="text-xs font-semibold text-white px-2 py-1 rounded-full ${assigneeColor}">${task.assignedTo}</span>
                     <span class="text-xs font-medium text-gray-500 flex items-center gap-1">${frequencyIcon}</span>
+                    <span class="text-xs font-semibold text-gray-500">Assigned by: ${task.assignedBy || '...'}</span>
                 </div>
             `;
             container.appendChild(taskElement);
@@ -457,6 +479,7 @@
             document.getElementById('taskForm').reset();
             document.getElementById('taskId').value = '';
             document.getElementById('modalTitle').textContent = 'Add a new task';
+            document.querySelector('input[name="frequency"][value="one-time"]').checked = true; // Default to one-time
             taskModal.classList.remove('hidden');
         }
 
@@ -466,9 +489,10 @@
             document.getElementById('taskId').value = task.id;
             document.getElementById('taskTitle').value = task.title;
             document.getElementById('taskDescription').value = task.description;
-            if (task.assignedTo === USER1_NAME) document.getElementById('assign-user1').checked = true;
-            else if (task.assignedTo === USER2_NAME) document.getElementById('assign-user2').checked = true;
-            if (task.frequency) document.querySelector(`input[name="frequency"][value="${task.frequency}"]`).checked = true;
+            if (task.owner === USER1_NAME) document.getElementById('owner-user1').checked = true;
+            else if (task.owner === USER2_NAME) document.getElementById('owner-user2').checked = true;
+            const frequency = task.frequency || 'one-time';
+            document.querySelector(`input[name="frequency"][value="${frequency}"]`).checked = true;
             taskModal.classList.remove('hidden');
         }
 
@@ -489,14 +513,8 @@
             
             confirmModal.classList.remove('hidden');
 
-            const handleOk = () => {
-                onConfirm();
-                confirmModal.classList.add('hidden');
-            };
-
-            const handleCancel = () => {
-                confirmModal.classList.add('hidden');
-            };
+            const handleOk = () => { onConfirm(); confirmModal.classList.add('hidden'); };
+            const handleCancel = () => { confirmModal.classList.add('hidden'); };
             
             okBtn.addEventListener('click', handleOk, { once: true });
             cancelBtn.addEventListener('click', handleCancel, { once: true });
@@ -559,13 +577,12 @@
                     
                     const taskId = currentDraggedTask.id;
                     const newStatus = column.dataset.status;
-                    const originalStatus = localTasks[taskId]?.status;
+                    const taskData = localTasks[taskId];
                     
-                    if (newStatus !== originalStatus) {
+                    if (taskData && newStatus !== taskData.status) {
                         try {
                             await updateDoc(doc(db, 'spaces', SHARED_SPACE_ID, 'tasks', taskId), { 
-                                status: newStatus,
-                                lastModifiedBy: currentUser
+                                status: newStatus
                             });
                         } catch (error) {
                             console.error("Error updating task status:", error);
@@ -589,6 +606,42 @@
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
         
+        // --- Task Reset Logic ---
+        async function checkAndResetTasks() {
+            const now = new Date();
+            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon,...
+            const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            const batch = writeBatch(db);
+            let updatesMade = false;
+
+            for (const taskId in localTasks) {
+                const task = localTasks[taskId];
+                if (task.status === 'todo') continue;
+
+                const lastReset = task.resetAt ? task.resetAt.toDate() : new Date(0);
+                let needsReset = false;
+
+                if (task.frequency === 'daily' && lastReset < startOfToday) {
+                    needsReset = true;
+                } else if (task.frequency === 'weekly' && lastReset < startOfWeek) {
+                    needsReset = true;
+                }
+
+                if (needsReset) {
+                    const taskRef = doc(db, 'spaces', SHARED_SPACE_ID, 'tasks', taskId);
+                    batch.update(taskRef, { status: 'todo', completionNote: '', resetAt: serverTimestamp() });
+                    updatesMade = true;
+                }
+            }
+
+            if (updatesMade) {
+                await batch.commit();
+            }
+        }
+
         // --- Data Seeding ---
         async function seedDatabaseIfEmpty() {
             const tasksCollection = getTasksCollection();
@@ -597,9 +650,9 @@
                 console.log("Space is empty. Seeding with sample data...");
                 const batch = writeBatch(db);
                 const sampleTasks = [
-                    { title: "Plan date night", description: "Decide on a restaurant and make reservations.", assignedTo: "Hinna", frequency: "weekly", status: "todo", createdAt: serverTimestamp() },
-                    { title: "Workout session", description: "Go for a 30-minute run together.", assignedTo: "Zilus", frequency: "daily", status: "inprogress", createdAt: serverTimestamp() },
-                    { title: "Grocery shopping", description: "Milk, bread, eggs, and snacks.", assignedTo: "Hinna", frequency: "weekly", status: "todo", createdAt: serverTimestamp() }
+                    { title: "Plan date night", description: "Decide on a restaurant and make reservations.", owner: "Hinna", frequency: "weekly", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() },
+                    { title: "Workout session", description: "Go for a 30-minute run together.", owner: "Zilus", frequency: "daily", status: "inprogress", createdAt: serverTimestamp(), assignedBy: "Zilus", resetAt: serverTimestamp() },
+                    { title: "Buy birthday gift", description: "For mom's birthday next month.", owner: "Zilus", frequency: "one-time", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() }
                 ];
                 sampleTasks.forEach(task => {
                     const docRef = doc(tasksCollection);
