@@ -30,6 +30,7 @@
             --color-secondary: #FCE8EC;
             --color-accent-zilus: #D1C4E9; /* Purple for Zilus */
             --color-accent-hinna: #F4A261;  /* Orange for Hinna */
+            --color-accent-us: #f8c9d1; /* Lighter pink for Us */
             --color-done: #A8D8B9;
             --color-inprogress: #A9CEF4;
             --color-todo: #FDE2A2;
@@ -38,6 +39,7 @@
         .bg-secondary { background-color: var(--color-secondary); }
         .bg-accent-zilus { background-color: var(--color-accent-zilus); }
         .bg-accent-hinna { background-color: var(--color-accent-hinna); }
+        .bg-accent-us { background-color: var(--color-accent-us); }
         .text-accent-zilus { color: #5a4b8c; }
         .text-accent-hinna { color: #b56c26; }
         .border-accent-zilus { border-color: var(--color-accent-zilus); }
@@ -183,6 +185,7 @@
                     <div class="flex gap-4">
                         <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user1"><input type="radio" name="assignedTo" id="assign-user1" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user1" class="font-semibold"></span></label>
                         <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-user2"><input type="radio" name="assignedTo" id="assign-user2" value="" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-user2" class="font-semibold"></span></label>
+                        <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-transparent cursor-pointer" id="label-us"><input type="radio" name="assignedTo" id="assign-us" value="Us" class="form-radio h-5 w-5 text-primary focus:ring-primary"><span id="name-us" class="font-semibold">Us</span></label>
                     </div>
                 </div>
                 <div class="flex justify-end gap-4">
@@ -248,7 +251,7 @@
         // --- Global Variables ---
         let app, db, auth;
         let currentUser = null;
-        let currentDraggedTask = null;
+        let currentDraggedElement = null;
         let unsubscribe;
         let localTasks = {}; // Local cache of tasks
         const SHARED_SPACE_ID = "our-special-space";
@@ -344,6 +347,8 @@
             document.getElementById('assign-user2').value = USER2_NAME;
             document.getElementById('label-user1').style.backgroundColor = 'var(--color-accent-hinna)';
             document.getElementById('label-user2').style.backgroundColor = 'var(--color-accent-zilus)';
+            document.getElementById('label-us').style.backgroundColor = 'var(--color-accent-us)';
+
 
             // Event Listeners
             document.getElementById('addTaskBtn').addEventListener('click', openAddTaskModal);
@@ -401,12 +406,15 @@
             for (const taskId in localTasks) {
                 const task = localTasks[taskId];
                 
-                // Render on the specific user's board
-                const ownerName = task.assignedTo.toLowerCase();
-                renderTask(task, `${ownerName}-${task.status}-tasks`, isInitial);
-
                 // Render on the unified "Our Board"
                 renderTask(task, `our-${task.status}-tasks`, isInitial);
+
+                // Render on the specific user's board IF assigned to them
+                if (task.assignedTo === USER1_NAME) {
+                    renderTask(task, `hinna-${task.status}-tasks`, isInitial);
+                } else if (task.assignedTo === USER2_NAME) {
+                    renderTask(task, `zilus-${task.status}-tasks`, isInitial);
+                }
             }
             
             setupDragAndDrop();
@@ -474,15 +482,21 @@
                 return;
             }
 
+            const boardPrefix = containerId.split('-')[0];
             const taskElement = document.createElement('div');
-            taskElement.id = task.id;
+            taskElement.id = `${boardPrefix}-${task.id}`;
+            taskElement.dataset.taskId = task.id;
             taskElement.className = 'task bg-white p-4 rounded-lg shadow cursor-grab';
             if(withAnimation) {
                 taskElement.classList.add('task-enter-animation');
             }
             taskElement.draggable = true;
 
-            const assigneeColor = task.assignedTo === USER1_NAME ? 'bg-accent-hinna' : 'bg-accent-zilus';
+            let assigneeColor;
+            if (task.assignedTo === USER1_NAME) assigneeColor = 'bg-accent-hinna';
+            else if (task.assignedTo === USER2_NAME) assigneeColor = 'bg-accent-zilus';
+            else assigneeColor = 'bg-primary';
+
             const frequencyMap = {
                 'daily': '<span>☀️</span> Daily',
                 'weekly': '<span>🗓️</span> Weekly',
@@ -503,8 +517,8 @@
                 <div class="flex justify-between items-start">
                     <h3 class="font-bold text-md mb-1 pr-2">${task.title}</h3>
                     <div class="flex gap-2 items-center text-gray-400">
-                        <button class="edit-btn hover:text-blue-500 transition-colors" data-id="${task.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
-                        <button class="delete-btn hover:text-red-500 transition-colors" data-id="${task.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                        <button class="edit-btn hover:text-blue-500 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+                        <button class="delete-btn hover:text-red-500 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                     </div>
                 </div>
                 <p class="text-sm text-gray-600 mb-3">${task.description}</p>
@@ -534,6 +548,8 @@
             document.getElementById('taskDescription').value = task.description;
             if (task.assignedTo === USER1_NAME) document.getElementById('assign-user1').checked = true;
             else if (task.assignedTo === USER2_NAME) document.getElementById('assign-user2').checked = true;
+            else if (task.assignedTo === 'Us') document.getElementById('assign-us').checked = true;
+
             const frequency = task.frequency || 'one-time';
             document.querySelector(`input[name="frequency"][value="${frequency}"]`).checked = true;
             taskModal.classList.remove('hidden');
@@ -565,25 +581,19 @@
 
         // --- Event Delegation for Board ---
         function handleBoardClicks(e) {
-            const editBtn = e.target.closest('.edit-btn');
-            const deleteBtn = e.target.closest('.delete-btn');
-            const addNoteBtn = e.target.closest('.add-note-btn');
+            const taskElement = e.target.closest('.task');
+            if (!taskElement) return;
 
-            if (editBtn) {
-                const taskId = e.target.closest('.task').id;
-                const task = localTasks[taskId];
+            const taskId = taskElement.dataset.taskId;
+            const task = localTasks[taskId];
+
+            if (e.target.closest('.edit-btn')) {
                 if(task) openEditTaskModal(task);
-            }
-
-            if (deleteBtn) {
-                const taskId = e.target.closest('.task').id;
+            } else if (e.target.closest('.delete-btn')) {
                 showConfirmationModal('This task will be permanently deleted.', false, () => {
                     deleteDoc(doc(db, 'spaces', SHARED_SPACE_ID, 'tasks', taskId)).catch(err => console.error(err));
                 });
-            }
-
-            if(addNoteBtn) {
-                const taskId = e.target.closest('.task').id;
+            } else if (e.target.closest('.add-note-btn')) {
                 document.getElementById('completionTaskId').value = taskId;
                 document.getElementById('completionNoteForm').reset();
                 completionNoteModal.classList.remove('hidden');
@@ -595,30 +605,34 @@
             document.querySelectorAll('.task').forEach(task => {
                 task.addEventListener('dragstart', e => {
                     e.target.classList.add('dragging');
-                    currentDraggedTask = e.target;
+                    currentDraggedElement = e.target;
                 });
-                task.addEventListener('dragend', e => e.target.classList.remove('dragging'));
+                task.addEventListener('dragend', e => {
+                    if (currentDraggedElement) {
+                        currentDraggedElement.classList.remove('dragging');
+                    }
+                    currentDraggedElement = null;
+                });
             });
 
             document.querySelectorAll('.kanban-column').forEach(column => {
                 column.addEventListener('dragover', e => {
                     e.preventDefault();
                     const afterElement = getDragAfterElement(column.querySelector('.task-container'), e.clientY);
-                    const draggable = document.querySelector('.dragging');
-                    if (draggable) {
+                    if (currentDraggedElement) {
                         if (afterElement == null) {
-                            column.querySelector('.task-container').appendChild(draggable);
+                            column.querySelector('.task-container').appendChild(currentDraggedElement);
                         } else {
-                            column.querySelector('.task-container').insertBefore(draggable, afterElement);
+                            column.querySelector('.task-container').insertBefore(currentDraggedElement, afterElement);
                         }
                     }
                 });
 
                 column.addEventListener('drop', async (e) => {
                     e.preventDefault();
-                    if (!currentDraggedTask) return;
+                    if (!currentDraggedElement) return;
                     
-                    const taskId = currentDraggedTask.id;
+                    const taskId = currentDraggedElement.dataset.taskId;
                     const newStatus = column.dataset.status;
                     const taskData = localTasks[taskId];
                     
@@ -631,7 +645,7 @@
                             console.error("Error updating task status:", error);
                         }
                     }
-                    currentDraggedTask = null;
+                    currentDraggedElement = null;
                 });
             });
         }
@@ -693,9 +707,9 @@
                 console.log("Space is empty. Seeding with sample data...");
                 const batch = writeBatch(db);
                 const sampleTasks = [
-                    { title: "Plan date night", description: "Decide on a restaurant and make reservations.", assignedTo: "Hinna", frequency: "weekly", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() },
+                    { title: "Plan date night", description: "Decide on a restaurant and make reservations.", assignedTo: "Us", frequency: "weekly", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() },
                     { title: "Workout session", description: "Go for a 30-minute run together.", assignedTo: "Zilus", frequency: "daily", status: "inprogress", createdAt: serverTimestamp(), assignedBy: "Zilus", resetAt: serverTimestamp() },
-                    { title: "Buy birthday gift", description: "For mom's birthday next month.", assignedTo: "Zilus", frequency: "one-time", status: "todo", createdAt: serverTimestamp(), assignedBy: "Hinna", resetAt: serverTimestamp() }
+                    { title: "Buy birthday gift", description: "For mom's birthday next month.", assignedTo: "Hinna", frequency: "one-time", status: "todo", createdAt: serverTimestamp(), assignedBy: "Zilus", resetAt: serverTimestamp() }
                 ];
                 sampleTasks.forEach(task => {
                     const docRef = doc(tasksCollection);
